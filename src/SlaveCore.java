@@ -5,14 +5,14 @@ public class SlaveCore extends Thread {
         this.sharedMemory = sharedMemory;
     }
 
-    public void assignTask(Task task) {
-        executeTask(task);
+    public void assignProcess(Process prc) {
+        executeProcess(prc);
     }
 
-    public void executeTask(Task task) {
+    public void executeProcess(Process prc) {
         try {
-            System.out.println("Core executing task: " + task);
-            task.execute();
+            System.out.println("Core executing task: " + prc);
+            prc.execute();
             System.out.println("Task execution complete.");
         } catch (Exception e) {
             System.out.println("Core encountered an error while executing task: " + e.getMessage());
