@@ -1,18 +1,21 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SharedMemory {
-    private final Map<String, Integer> memory = new HashMap<>();
+    private final ConcurrentHashMap<String, Integer> memory;
+
+    public SharedMemory() {
+        memory = new ConcurrentHashMap<>();
+    }
 
     public synchronized void write(String key, int value) {
-        memory.put(key, value);  // Update shared memory
+        memory.put(key, value);
     }
 
-    public synchronized int read(String key) {
-        return memory.getOrDefault(key, 0);  // Return 0 if the key doesn't exist
+    public synchronized Integer read(String key) {
+        return memory.get(key);
     }
 
-    public synchronized void displayMemoryState() {
-        System.out.println("Current Memory State: " + memory);
+    public void displayMemoryState() {
+        System.out.println(memory);
     }
 }

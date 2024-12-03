@@ -1,12 +1,12 @@
 public class PCB {
-    private int processId;
+    private final int processId;
     private int programCounter;
-    private int memoryBoundary;
+    private final int memoryBoundary;
 
     public PCB(int processId, int memoryBoundary) {
         this.processId = processId;
-        this.memoryBoundary = memoryBoundary;
         this.programCounter = 0;
+        this.memoryBoundary = memoryBoundary;
     }
 
     public int getProcessId() {
@@ -18,11 +18,6 @@ public class PCB {
     }
 
     public void incrementProgramCounter() {
-        this.programCounter++;
-    }
-
-    @Override
-    public String toString() {
-        return "PCB [Process ID: " + processId + ", Program Counter: " + programCounter + ", Memory Boundary: " + memoryBoundary + "]";
+        programCounter++;
     }
 }
