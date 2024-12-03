@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class MultiCoreSystem {
+public class MultiCoreSystem extends Thread {
     private static final String INSTRUCTIONS_FILE = "src/Program_2.txt"; // Path to the instructions file
     private static int tempCounter = 0;
 
