@@ -20,4 +20,8 @@ public class PCB {
     public void incrementProgramCounter() {
         programCounter++;
     }
+
+    public boolean isCompleted(int totalInstructions) {
+        return programCounter >= totalInstructions;
+    }
 }

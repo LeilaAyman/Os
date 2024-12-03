@@ -1,19 +1,19 @@
 public class SlaveCore extends Thread {
     private final SharedMemory sharedMemory;
+    private boolean active;
 
     public SlaveCore(SharedMemory sharedMemory) {
         this.sharedMemory = sharedMemory;
+        this.active = false;
     }
 
     public void assignProcess(Process prc) {
-        executeProcess(prc);
+        active = true;
+        boolean processActive = prc.executeNextInstructions(sharedMemory); // Execute up to 2 instructions
+        active = processActive; // Update the status based on process state
     }
 
-    public void executeProcess(Process prc) {
-        try {
-            prc.execute(sharedMemory);
-        } catch (Exception e) {
-            System.out.println("Core encountered an error while executing task: " + e.getMessage());
-        }
+    public boolean isActive() {
+        return active;
     }
 }

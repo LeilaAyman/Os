@@ -1,0 +1,6 @@
+assign a input
+assign b input
+assign d add a b
+print d
+assign e subtract b a
+print e
