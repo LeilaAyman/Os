@@ -16,33 +16,32 @@ public class MasterCore {
 
     public void enhancedScheduleWithCompletionTracking() {
         int clockCycle = 0;
-    
+
         while (!readyQueue.isEmpty()) {
             System.out.println("Clock Cycle: " + clockCycle++);
             System.out.println("Ready Queue: " + readyQueue);
-    
+
             for (int i = 0; i < slaveCores.length && !readyQueue.isEmpty(); i++) {
-                Integer processId = readyQueue.poll(); // Get the next process ID
+                Integer processId = readyQueue.poll();
                 Process prc = getProcessById(processId);
-    
+
                 if (prc != null) {
                     System.out.println("Core " + (i + 1) + " is executing process: " + prc.getPCB().getProcessId());
                     slaveCores[i].assignProcess(prc);
                     try {
-                        slaveCores[i].join(); // Ensure the process completes before moving to the next
+                        slaveCores[i].join();
                     } catch (InterruptedException e) {
                         System.out.println("Error while waiting for core completion: " + e.getMessage());
                     }
                 }
             }
-    
+
             System.out.println("Memory State after Cycle " + clockCycle + ":");
-            sharedMemory.displayMemoryState(); // Display the updated memory state
+            sharedMemory.displayMemoryState();
         }
-    
+
         System.out.println("All tasks completed.");
     }
-    
 
     private Process getProcessById(Integer processId) {
         for (Process prc : allProcesses) {

@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class MultiCoreSystem {
-    private static int tempCounter = 0; // To generate unique temp variable names
+    private static int tempCounter = 0;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -44,87 +44,37 @@ public class MultiCoreSystem {
 
         switch (operation) {
             case "assign" -> {
-                if (tokens.length == 3) {
-                    String varName = tokens[1];
-                    String value = tokens[2];
-
-                    if (value.equals("input")) {
-                        System.out.print("Enter value for " + varName + ": ");
-                        int userInput = scanner.nextInt();
-                        newProcess = new Process("assign", varName, userInput, generateProcessId(), 100);
-                        sharedMemory.write(varName, userInput);
-                        allProcesses.add(newProcess);
-                        System.out.println("Created assignment task: " + varName + " = " + userInput);
-                    } else if (value.startsWith("temp")) {
-                        Integer tempValue = sharedMemory.read(value);
-                        if (tempValue != null) {
-                            newProcess = new Process("assign", varName, tempValue, generateProcessId(), 100);
-                            allProcesses.add(newProcess);
-                            System.out.println("Assigned temp value: " + value + " to " + varName);
-                        } else {
-                            System.out.println("Temp variable " + value + " not found in shared memory.");
-                        }
-                    } else {
-                        try {
-                            int numericValue = Integer.parseInt(value);
-                            newProcess = new Process("assign", varName, numericValue, generateProcessId(), 100);
-                            sharedMemory.write(varName, numericValue);
-                            allProcesses.add(newProcess);
-                            System.out.println("Created direct assignment task: " + instruction);
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid numeric value: " + value);
-                        }
-                    }
-                } else if (tokens.length == 4) {
-                    String varName = tokens[1];
-                    String op = tokens[2].toLowerCase();
+                if (tokens[2].equals("input")) {
+                    System.out.print("Enter value for " + tokens[1] + ": ");
+                    int userInput = scanner.nextInt();
+                    newProcess = new Process("assign", tokens[1], userInput, generateProcessId(), 100);
+                    sharedMemory.write(tokens[1], userInput);
+                    allProcesses.add(newProcess);
+                } else {
                     String operand1Name = tokens[3];
                     String operand2Name = tokens[4];
-
                     Integer operand1 = sharedMemory.read(operand1Name);
                     Integer operand2 = sharedMemory.read(operand2Name);
 
                     if (operand1 != null && operand2 != null) {
-                        String tempVarName = "temp" + (++tempCounter);
-                        Process arithmeticProcess = new Process(op, tempVarName, operand1, operand2, generateProcessId(), 100);
-                        allProcesses.add(arithmeticProcess);
-                        sharedMemory.write(tempVarName, 0);
-                        System.out.println("Created " + op + " task: " + operand1Name + ", " + operand2Name + " with result stored in " + tempVarName);
+                        int result = switch (tokens[2].toLowerCase()) {
+                            case "add" -> operand1 + operand2;
+                            case "subtract" -> operand1 - operand2;
+                            case "multiply" -> operand1 * operand2;
+                            case "divide" -> operand2 != 0 ? operand1 / operand2 : 0;
+                            default -> throw new IllegalArgumentException("Unknown operation: " + tokens[2]);
+                        };
 
-                        newProcess = new Process("assign", varName, 0, generateProcessId(), 100);
+                        sharedMemory.write(tokens[1], result);
+                        newProcess = new Process("assign", tokens[1], result, generateProcessId(), 100);
                         allProcesses.add(newProcess);
-                        System.out.println("Created assignment task: " + varName + " = " + tempVarName);
-                    } else {
-                        System.out.println("Operands not found for operation: " + op + " on " + varName);
-                    }
-                }
-            }
-            case "add", "subtract", "multiply", "divide" -> {
-                if (tokens.length == 3) {
-                    String operand1Name = tokens[1];
-                    String operand2Name = tokens[2];
-
-                    Integer operand1 = sharedMemory.read(operand1Name);
-                    Integer operand2 = sharedMemory.read(operand2Name);
-
-                    if (operand1 != null && operand2 != null) {
-                        String tempVarName = "temp" + (++tempCounter);
-                        newProcess = new Process(operation, tempVarName, operand1, operand2, generateProcessId(), 100);
-                        allProcesses.add(newProcess);
-                        sharedMemory.write(tempVarName, 0);
-                        System.out.println("Created " + operation + " task: " + operand1Name + ", " + operand2Name + " with result stored in " + tempVarName);
-                    } else {
-                        System.out.println("Operands not found for operation: " + operation);
                     }
                 }
             }
             case "print" -> {
-                if (tokens.length == 2) {
-                    String varName = tokens[1];
-                    newProcess = new Process("print", varName, 0, generateProcessId(), 100);
-                    allProcesses.add(newProcess);
-                    System.out.println("Created print task: " + instruction);
-                }
+                String varName = tokens[1];
+                newProcess = new Process("print", varName, 0, generateProcessId(), 100);
+                allProcesses.add(newProcess);
             }
             default -> System.out.println("Unknown instruction: " + instruction);
         }
