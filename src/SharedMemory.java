@@ -9,7 +9,7 @@ public class SharedMemory {
 
     public synchronized void write(String key, int value) {
         memory.put(key, value);
-        System.out.println("[SharedMemory] Updated: " + key + " = " + value);
+       // System.out.println("[SharedMemory] Updated: " + key + " = " + value);
     }
     
     public synchronized Integer read(String key) {
