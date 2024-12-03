@@ -118,8 +118,4 @@ public class Process {
     public boolean isCompleted() {
         return pcb.isCompleted(instructions.size());
     }
-    
-    
-
-    
 }
