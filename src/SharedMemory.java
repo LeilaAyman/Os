@@ -11,6 +11,15 @@ public class SharedMemory {
         memory.put(key, value);
        // System.out.println("[SharedMemory] Updated: " + key + " = " + value);
     }
+    // public synchronized Integer read(String key , int processId) {
+    //     Integer value = memory.get(key);
+    //     if(value == null) {
+    //         System.out.println("[SharedMemory] Read: " + key + " = " + "null");
+    //         return null;
+    //     }
+    //     System.out.println("[SharedMemory] Read: " + key + " = " + (value != null ? value : "null"));
+    //     return value;
+    // }
     
     public synchronized Integer read(String key) {
         Integer value = memory.get(key);

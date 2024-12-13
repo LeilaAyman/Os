@@ -52,7 +52,6 @@ public class Process {
 
     private void handleAssign(String[] index, SharedMemory sharedMemory) {
         if (index.length == 5) {
-            // Handle operations like `assign c add a b`, `assign c multiply a b`, or `assign c divide a b`
             String operation = index[2].toLowerCase();
             String operand1Name = index[3] + " (Process " + processId + ")";
             String operand2Name = index[4] + " (Process " + processId + ")";
@@ -67,7 +66,7 @@ public class Process {
                     case "divide" -> {
                         if (operand2 == 0) {
                             System.out.println("Error: Division by zero is not allowed.");
-                            yield 0; // Return 0 or handle this case as per your logic
+                            yield 0; 
                         } else {
                             yield operand1 / operand2;
                         }
@@ -83,7 +82,6 @@ public class Process {
                 System.out.println("Operands not found or undefined for computation: " + String.join(" ", index));
             }
         } else if (index.length == 3 && index[2].equals("input")) {
-            // Handle direct input assignment with error handling
             boolean validInput = false;
             int value = 0;
     
@@ -93,11 +91,10 @@ public class Process {
                         System.out.print("Enter value for " + index[1] + " (Process " + processId + "): ");
                         Scanner scanner = new Scanner(System.in);
                         value = scanner.nextInt();
-                        validInput = true; // Valid input received
+                        validInput = true; 
                     }
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter an integer value.");
-                    // Clear the scanner buffer
                     Scanner scanner = new Scanner(System.in);
                 }
             }

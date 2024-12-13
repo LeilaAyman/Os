@@ -5,8 +5,8 @@ public class MasterCore {
     private final Queue<Process> readyQueue;
     private final SlaveCore[] slaveCores;
     private final SharedMemory sharedMemory;
-    private int completedProcesses = 0; // Track completed processes
-    private final String schedulingAlgorithm = "Round Robin"; // Algorithm used
+    private int completedProcesses = 0; 
+    private final String schedulingAlgorithm = "Round Robin"; 
 
     public MasterCore(Queue<Process> readyQueue, SlaveCore[] slaveCores, SharedMemory sharedMemory) {
         this.readyQueue = readyQueue;
@@ -16,13 +16,14 @@ public class MasterCore {
 
     public void ScheduleWithCompletionTracking() {
         AtomicInteger clockCycle = new AtomicInteger(0);
+       // clockCycle.set(0);
     
-        // Track the current process and remaining cycles for each core
         Process[] currentProcesses = new Process[slaveCores.length];
         int[] remainingCycles = new int[slaveCores.length];
     
         while (!readyQueue.isEmpty() || areCoresActive(currentProcesses)) {
             System.out.println("\nClock Cycle: " + clockCycle.get());
+           // ScheduleWithCompletionTracking();
     
             Thread[] coreThreads = new Thread[slaveCores.length];
     
@@ -32,13 +33,13 @@ public class MasterCore {
                 coreThreads[i] = new Thread(() -> {
                     Process currentProcess = currentProcesses[coreIndex];
     
-                    // Fetch a new process if the core has no process or completed 2 cycles
                     if (currentProcess == null || remainingCycles[coreIndex] == 0) {
                         synchronized (readyQueue) {
                             if (!readyQueue.isEmpty()) {
+                               // clockCycle.incrementAndGet();
                                 currentProcess = readyQueue.poll();
                                 currentProcesses[coreIndex] = currentProcess;
-                                remainingCycles[coreIndex] = 2; // Reset the cycle counter
+                                remainingCycles[coreIndex] = 2; 
                             }
                         }
                     }
@@ -48,32 +49,49 @@ public class MasterCore {
                             System.out.println("Core " + (coreIndex + 1) + ": Executing Process " 
                                 + currentProcess.getProcessId() + " - " 
                                 + currentProcess.getCurrentInstruction());
+                               // + currentProcess.getPCB().getProgramCounter();
                         }
     
                         boolean hasMoreInstructions = currentProcess.executeNextInstructions(sharedMemory);
-                        remainingCycles[coreIndex]--; // Decrease the cycle count for this core
+                        remainingCycles[coreIndex]--; 
     
                         if (!hasMoreInstructions) {
+                           // ++completedProcesses;
                             synchronized (System.out) {
                                 System.out.println("Process " + currentProcess.getProcessId() + " has completed execution.");
                             }
-                            completedProcesses++; // Increment completed processes
-                            currentProcesses[coreIndex] = null; // Clear the core as the process is done
-                            remainingCycles[coreIndex] = 0; // Reset remaining cycles
+                            completedProcesses++; 
+                            currentProcesses[coreIndex] = null;
+                            remainingCycles[coreIndex] = 0;
+                            //remainingCycles[clockCycle] = 0;
+
                         } else if (remainingCycles[coreIndex] == 0) {
-                            // Requeue the process if it has more instructions after 2 cycles
+                            //readyQueue.add(currentProcess);
                             synchronized (readyQueue) {
                                 if (!currentProcess.isCompleted()) {
                                     readyQueue.add(currentProcess);
+                                  //  remainingCycles[coreIndex] = 2;
                                 }
-                                currentProcesses[coreIndex] = null; // Clear the core for a new process
+                                currentProcesses[coreIndex] = null; 
                             }
                         }
                     }
                 });
-    
+               // coreThreads[i].setDaemon(true);
                 coreThreads[i].start();
             }
+
+
+            // for (Thread thread : coreThreads) {
+            //     try {
+            //         thread.join();
+            //         thread.sleep(1000);
+            //     } catch (InterruptedException e) {
+            //         ScheduleWithCompletionTracking();
+            //         System.out.println("Error waiting for core thread: " + e.getMessage());
+            //     }
+            // }
+
     
             for (Thread thread : coreThreads) {
                 try {
@@ -82,14 +100,16 @@ public class MasterCore {
                     System.out.println("Error waiting for core thread: " + e.getMessage());
                 }
             }
+
+
     
-            printReadyQueueIds(); // Show updated ready queue
-            sharedMemory.displayMemoryState(); // Show shared memory state
+            printReadyQueueIds();
+            sharedMemory.displayMemoryState(); 
             clockCycle.incrementAndGet();
         }
     
         System.out.println("\nAll processes have completed execution.");
-        displayExecutionSummary(clockCycle.get()); // Display summary at the end
+        displayExecutionSummary(clockCycle.get()); 
     }
     
     private void displayExecutionSummary(int totalClockCycles) {
@@ -114,11 +134,14 @@ public class MasterCore {
             }
         }
     }
+
+    
     
     private boolean areCoresActive(Process[] currentProcesses) {
         for (Process process : currentProcesses) {
             if (process != null && !process.isCompleted()) {
                 return true;
+               // return Process;
             }
         }
         return false;
