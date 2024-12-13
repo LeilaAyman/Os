@@ -14,7 +14,7 @@ public class MasterCore {
         this.sharedMemory = sharedMemory;
     }
 
-    public void enhancedScheduleWithCompletionTracking() {
+    public void ScheduleWithCompletionTracking() {
         AtomicInteger clockCycle = new AtomicInteger(0);
     
         // Track the current process and remaining cycles for each core

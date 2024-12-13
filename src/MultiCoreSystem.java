@@ -19,7 +19,7 @@ public class MultiCoreSystem {
         System.out.println("Initial Ready Queue: " + readyQueue.size() + " processes");
 
         MasterCore masterCore = new MasterCore(readyQueue, slaveCores, sharedMemory);
-        masterCore.enhancedScheduleWithCompletionTracking();
+        masterCore.ScheduleWithCompletionTracking();
     }
 
     public static void addProcess(String fileName, Queue<Process> readyQueue, List<Process> allProcesses, SharedMemory sharedMemory, int processIdCounter) {

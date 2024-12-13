@@ -42,20 +42,20 @@ public class Process {
     }
 
     private void handleInstruction(String instruction, SharedMemory sharedMemory) {
-        String[] tokens = instruction.split("\\s+");
-        switch (tokens[0].toLowerCase()) {
-            case "assign" -> handleAssign(tokens, sharedMemory);
-            case "print" -> handlePrint(tokens, sharedMemory);
+        String[] index = instruction.split("\\s+");
+        switch (index[0].toLowerCase()) {
+            case "assign" -> handleAssign(index, sharedMemory);
+            case "print" -> handlePrint(index, sharedMemory);
             default -> System.out.println("Unknown instruction: " + instruction);
         }
     }
 
-    private void handleAssign(String[] tokens, SharedMemory sharedMemory) {
-        if (tokens.length == 5) {
+    private void handleAssign(String[] index, SharedMemory sharedMemory) {
+        if (index.length == 5) {
             // Handle operations like `assign c add a b`, `assign c multiply a b`, or `assign c divide a b`
-            String operation = tokens[2].toLowerCase();
-            String operand1Name = tokens[3] + " (Process " + processId + ")";
-            String operand2Name = tokens[4] + " (Process " + processId + ")";
+            String operation = index[2].toLowerCase();
+            String operand1Name = index[3] + " (Process " + processId + ")";
+            String operand2Name = index[4] + " (Process " + processId + ")";
             Integer operand1 = sharedMemory.read(operand1Name);
             Integer operand2 = sharedMemory.read(operand2Name);
     
@@ -77,12 +77,12 @@ public class Process {
                         yield 0;
                     }
                 };
-                sharedMemory.write(tokens[1] + " (Process " + processId + ")", result);
-                System.out.println("[SharedMemory] Updated: " + tokens[1] + " (Process " + processId + ") = " + result);
+                sharedMemory.write(index[1] + " (Process " + processId + ")", result);
+                System.out.println("[SharedMemory] Updated: " + index[1] + " (Process " + processId + ") = " + result);
             } else {
-                System.out.println("Operands not found or undefined for computation: " + String.join(" ", tokens));
+                System.out.println("Operands not found or undefined for computation: " + String.join(" ", index));
             }
-        } else if (tokens.length == 3 && tokens[2].equals("input")) {
+        } else if (index.length == 3 && index[2].equals("input")) {
             // Handle direct input assignment with error handling
             boolean validInput = false;
             int value = 0;
@@ -90,7 +90,7 @@ public class Process {
             while (!validInput) {
                 try {
                     synchronized (System.in) {
-                        System.out.print("Enter value for " + tokens[1] + " (Process " + processId + "): ");
+                        System.out.print("Enter value for " + index[1] + " (Process " + processId + "): ");
                         Scanner scanner = new Scanner(System.in);
                         value = scanner.nextInt();
                         validInput = true; // Valid input received
@@ -102,10 +102,10 @@ public class Process {
                 }
             }
     
-            sharedMemory.write(tokens[1] + " (Process " + processId + ")", value);
-            System.out.println("[SharedMemory] Updated: " + tokens[1] + " (Process " + processId + ") = " + value);
+            sharedMemory.write(index[1] + " (Process " + processId + ")", value);
+            System.out.println("[SharedMemory] Updated: " + index[1] + " (Process " + processId + ") = " + value);
         } else {
-            System.out.println("Invalid instruction format: " + String.join(" ", tokens));
+            System.out.println("Invalid instruction format: " + String.join(" ", index));
         }
     }
     

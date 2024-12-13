@@ -1,7 +1,7 @@
 assign a input
 assign b input
-assign c  multiply a b
+assign c subtract a b
 print c
-assign d  add a b
-print d
+assign c add a b
+print c
 
